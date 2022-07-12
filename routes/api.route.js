@@ -3,6 +3,7 @@ const { PrismaClient } = require("@prisma/Client");
 const prisma = new PrismaClient();
 
 
+
 router.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });
 });
