@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Aranceles {
+  IdCurso                Decimal  @db.Decimal(18, 0)
+  FechaDesde             DateTime @db.SmallDateTime
+  FechaHasta             DateTime @db.SmallDateTime
+  Precio                 Decimal? @db.Decimal(7, 2)
+  CantidadUnidadesMinima Int?     @default(1, map: "DF_Aranceles_CantidadUnidadesMinima")
+  Cursos                 Cursos   @relation(fields: [IdCurso], references: [idCurso], onUpdate: NoAction, map: "FK_Aranceles_Cursos")
+
+  @@id([IdCurso, FechaDesde, FechaHasta], map: "PK_Aranceles")
+}
+
+model Cursos {
+  idCurso                  Decimal         @id(map: "PK_Cursos") @db.Decimal(18, 0)
+  nombre1                  String?         @db.NVarChar(250)
+  nombre2                  String?         @db.NVarChar(250)
+  codigo                   String?         @db.NVarChar(10)
+  idGrupoCurso             Decimal?        @db.Decimal(3, 0)
+  fechaInicio              DateTime?       @db.SmallDateTime
+  fechaFin                 DateTime?       @db.SmallDateTime
+  cupoMaximo               Decimal?        @db.Decimal(3, 0)
+  habilitado               Boolean?
+  resaltar                 Boolean?
+  codUnidadAcademica       Decimal?        @db.Decimal(2, 0)
+  idPrograma               Decimal?        @db.Decimal(4, 0)
+  idPlanEstudio            Decimal?        @db.Decimal(4, 0)
+  idObligacion             Decimal?        @db.Decimal(5, 0)
+  mailReferencia           String?         @db.VarChar(150)
+  domicilioReferencia      String?         @db.VarChar(150)
+  NombreContactoReferencia String?         @db.VarChar(100)
+  urlUbicacion             String?         @db.VarChar(400)
+  RequiereValidacionEmail  Boolean?
+  GrupoCurso               GrupoCurso?     @relation(fields: [idGrupoCurso], references: [idGrupo], onDelete: NoAction, onUpdate: NoAction, map: "FK_Cursos_GrupoCurso")
+  Aranceles                Aranceles[]
+  Inscripciones            Inscripciones[]
+  Pagos                    Pagos[]
+}
+
+model FormasPago {
+  idFormaPago             Decimal                @id(map: "PK_FormasPago") @db.Decimal(2, 0)
+  nombre                  String?                @db.NVarChar(50)
+  descripcion             String?                @db.NVarChar(250)
+  seleccionable           Boolean?
+  requiereValidacionEmail Boolean?
+  GrupoCursoFormasPago    GrupoCursoFormasPago[]
+}
+
+model GrupoCurso {
+  idGrupo                 Decimal                @id(map: "PK_GrupoCurso") @db.Decimal(3, 0)
+  codigo                  String?                @db.NVarChar(20)
+  Nombre                  String                 @db.NVarChar(150)
+  descripcion             String?                @db.NVarChar(250)
+  habilitado              Boolean?
+  RequiereValidacionEmail Boolean?
+  Cursos                  Cursos[]
+  GrupoCursoFormasPago    GrupoCursoFormasPago[]
+  UsuariosGrupoCursos     UsuariosGrupoCursos[]
+}
+
+model GrupoCursoFormasPago {
+  idGrupo     Decimal    @db.Decimal(3, 0)
+  idFormaPago Decimal    @db.Decimal(2, 0)
+  FormasPago  FormasPago @relation(fields: [idFormaPago], references: [idFormaPago], onUpdate: NoAction, map: "FK_GrupoCursoFormasPago_FormasPago")
+  GrupoCurso  GrupoCurso @relation(fields: [idGrupo], references: [idGrupo], onUpdate: NoAction, map: "FK_GrupoCursoFormasPago_GrupoCurso")
+
+  @@id([idGrupo, idFormaPago], map: "PK_GrupoCursoFormasPago")
+}
+
+model Inscripciones {
+  idInscripcion      Decimal        @id(map: "PK_Inscripciones") @db.Decimal(18, 0)
+  idCurso            Decimal        @db.Decimal(18, 0)
+  nroDocumento       Decimal?       @db.Decimal(11, 0)
+  fecha              DateTime?      @db.SmallDateTime
+  pagado             Boolean?
+  idParticipante     String?        @db.UniqueIdentifier
+  fechaAnulacion     DateTime?      @db.SmallDateTime
+  cantidad           Int?
+  importeTotal       Decimal?       @db.Decimal(10, 2)
+  codUnidadAcademica Decimal?       @db.Decimal(2, 0)
+  idPrograma         Decimal?       @db.Decimal(12, 0)
+  idPlanEstudio      Decimal?       @db.Decimal(12, 0)
+  idObligacion       Decimal?       @db.Decimal(5, 0)
+  Cursos             Cursos         @relation(fields: [idCurso], references: [idCurso], onUpdate: NoAction, map: "FK_Inscripciones_Cursos")
+  Participantes      Participantes? @relation(fields: [idParticipante], references: [idParticipante], onDelete: NoAction, onUpdate: NoAction, map: "FK_Inscripciones_Participantes")
+}
+
+model Pagos {
+  idParticipante     String        @db.UniqueIdentifier
+  idCurso            Decimal       @db.Decimal(18, 0)
+  nroDocumentox      Decimal?      @db.Decimal(8, 0)
+  fecha              DateTime?     @db.SmallDateTime
+  estado             String?       @db.NVarChar(100)
+  tipoPago           String?       @db.NVarChar(100)
+  external_reference String?       @db.NVarChar(150)
+  idPago             Decimal?      @db.Decimal(18, 0)
+  idFormaPago        Decimal?      @db.Decimal(2, 0)
+  importe            Decimal?      @db.Decimal(7, 2)
+  Cursos             Cursos        @relation(fields: [idCurso], references: [idCurso], onUpdate: NoAction, map: "FK_Pagos_Cursos")
+  Participantes      Participantes @relation(fields: [idParticipante], references: [idParticipante], onUpdate: NoAction, map: "FK_Pagos_Participantes")
+
+  @@id([idParticipante, idCurso], map: "PK_Pagos")
+}
+
+model Participantes {
+  idParticipante String          @id(map: "PK_Participantes") @db.UniqueIdentifier
+  nroDocumento   Decimal         @db.Decimal(11, 0)
+  apellido       String?         @db.NVarChar(50)
+  nombre         String?         @db.NVarChar(100)
+  tipoDocumento  String?         @db.NVarChar(10)
+  titulo         String?         @db.NVarChar(150)
+  universidad    String?         @db.NVarChar(150)
+  ocupacion      String?         @db.NVarChar(150)
+  domicilio      String?         @db.NVarChar(250)
+  ciudad         String?         @db.NVarChar(50)
+  provincia      String?         @db.NVarChar(50)
+  codPostal      Decimal?        @db.Decimal(10, 0)
+  telefono       String?         @db.NVarChar(250)
+  email          String?         @db.NVarChar(150)
+  emailValidado  Boolean?
+  FechaAlta      DateTime?       @default(now(), map: "DF_Participantes_FechaAlta") @db.DateTime
+  Inscripciones  Inscripciones[]
+  Pagos          Pagos[]
+}
+
+model Perfiles {
+  idPerfil         Decimal            @id(map: "PK_Perfiles") @db.Decimal(3, 0)
+  nombre           String?            @db.NVarChar(50)
+  UsuariosPerfiles UsuariosPerfiles[]
+}
+
+model sysdiagrams {
+  name         String @db.NVarChar(128)
+  principal_id Int
+  diagram_id   Int    @id(map: "PK__sysdiagr__C2B05B61D31EB884") @default(autoincrement())
+  version      Int?
+  definition   Bytes?
+
+  @@unique([principal_id, name], map: "UK_principal_name")
+}
+
+model Usuarios {
+  idUsuario           Decimal               @id(map: "PK_Usuarios") @db.Decimal(3, 0)
+  apellido            String?               @db.NVarChar(50)
+  nombre              String?               @db.NChar(50)
+  nombreUsuario       String?               @db.NVarChar(50)
+  clave               String?               @db.NVarChar(15)
+  UsuariosGrupoCursos UsuariosGrupoCursos[]
+  UsuariosPerfiles    UsuariosPerfiles[]
+}
+
+model UsuariosGrupoCursos {
+  idUsuario    Decimal    @db.Decimal(3, 0)
+  idGrupoCurso Decimal    @db.Decimal(3, 0)
+  GrupoCurso   GrupoCurso @relation(fields: [idGrupoCurso], references: [idGrupo], onUpdate: NoAction, map: "FK_UsuariosGrupoCursos_GrupoCurso")
+  Usuarios     Usuarios   @relation(fields: [idUsuario], references: [idUsuario], onUpdate: NoAction, map: "FK_UsuariosGrupoCursos_UsuariosGrupoCursos")
+
+  @@id([idUsuario, idGrupoCurso], map: "PK_UsuariosCursos")
+}
+
+model UsuariosPerfiles {
+  IdUsuario  Decimal  @db.Decimal(3, 0)
+  IdPerfil   Decimal  @db.Decimal(3, 0)
+  LogInterno String?  @db.VarChar(4000)
+  Perfiles   Perfiles @relation(fields: [IdPerfil], references: [idPerfil], onUpdate: NoAction, map: "FK_UsuariosPerfiles_Perfiles")
+  Usuarios   Usuarios @relation(fields: [IdUsuario], references: [idUsuario], onUpdate: NoAction, map: "FK_UsuariosPerfiles_Usuarios")
+
+  @@id([IdUsuario, IdPerfil], map: "PK_UsuariosPerfiles")
+}
