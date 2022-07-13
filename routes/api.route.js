@@ -9,6 +9,7 @@ router.get('/', async (req, res, next) => {
 });
 
 
+
 router.get("/grupocurso",async(req,res,next)=>{
 try{
 const eventos = await prisma.GrupoCurso.findMany({});
