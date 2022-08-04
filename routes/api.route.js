@@ -43,6 +43,22 @@ router.get("/arancelesxcurso/:id_curso", async (req, res, next) => {
   }
 });
 
+/************************CURSO POR ID*************************/
+
+router.get("/cursoxid/:id_curso", async (req, res, next) => {
+  const { id_curso } = req.params;
+  try {
+    const info = await prisma.Cursos.findMany({
+      where: {
+        idCurso: parseInt(id_curso),
+      },
+    });
+    res.json(info);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/nuevoarancel", async (req, res, next) => {
   const { IdCurso, FechaDesde, FechaHasta, Precio, CantidadUnidadesMinima } =
     req.body;
@@ -59,6 +75,107 @@ router.post("/nuevoarancel", async (req, res, next) => {
     });
 
     res.json(nuevoArancel);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/nuevocurso", async (req, res, next) => {
+  const {
+    nombre1,
+    nombre2,
+    codigo,
+    idGrupoCurso,
+    fechaInicio,
+    fechaFin,
+    cupoMaximo,
+    habilitado,
+    resaltar,
+    codUnidadAcademica,
+    idPrograma,
+    idPlanEstudio,
+    idObligacion,
+    mailReferencia,
+    domicilioReferencia,
+    NombreContactoReferencia,
+    urlUbicacion,
+    RequiereValidacionEmail,
+  } = req.body;
+
+  try {
+    const nuevoCurso = await prisma.Cursos.create({
+      data: {
+        nombre1,
+        nombre2,
+        codigo,
+        idGrupoCurso,
+        fechaInicio,
+        fechaFin,
+        cupoMaximo,
+        habilitado,
+        resaltar,
+        codUnidadAcademica,
+        idPrograma,
+        idPlanEstudio,
+        idObligacion,
+        mailReferencia,
+        domicilioReferencia,
+        NombreContactoReferencia,
+        urlUbicacion,
+        RequiereValidacionEmail,
+      },
+    });
+    res.send(nuevoCurso);
+  } catch (error) {
+    next("Este es el error", error);
+  }
+});
+
+router.post("/nuevocurso2", async (req, res, next) => {
+  const {
+    nombre1,
+    nombre2,
+    codigo,
+    idGrupoCurso,
+    fechaInicio,
+    fechaFin,
+    cupoMaximo,
+    habilitado,
+    resaltar,
+    codUnidadAcademica,
+    idPrograma,
+    idPlanEstudio,
+    idObligacion,
+    mailReferencia,
+    domicilioReferencia,
+    NombreContactoReferencia,
+    urlUbicacion,
+    RequiereValidacionEmail,
+  } = req.body;
+
+  try {
+    const cc = await prisma.Cursos.create({
+      data: {
+        nombre1,
+        nombre2,
+        codigo,
+        idGrupoCurso,
+        fechaInicio,
+        fechaFin,
+        cupoMaximo,
+        habilitado,
+        resaltar,
+        codUnidadAcademica,
+        idPrograma,
+        idPlanEstudio,
+        idObligacion,
+        mailReferencia,
+        domicilioReferencia,
+        NombreContactoReferencia,
+        urlUbicacion,
+        RequiereValidacionEmail,
+      },
+    });
   } catch (error) {
     next(error);
   }
