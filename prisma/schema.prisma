@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Aranceles {
-  IdCurso                Decimal  @db.Decimal(18, 0)
+  IdCurso                Int
   FechaDesde             DateTime @db.SmallDateTime
   FechaHasta             DateTime @db.SmallDateTime
   Precio                 Decimal? @db.Decimal(7, 2)
@@ -19,11 +19,11 @@ model Aranceles {
 }
 
 model Cursos {
-  idCurso                  Decimal         @id(map: "PK_Cursos") @db.Decimal(18, 0)
+  idCurso                  Int             @id(map: "PK_Cursos") @default(autoincrement())
   nombre1                  String?         @db.NVarChar(250)
   nombre2                  String?         @db.NVarChar(250)
   codigo                   String?         @db.NVarChar(10)
-  idGrupoCurso             Decimal?        @db.Decimal(3, 0)
+  idGrupoCurso             Int?
   fechaInicio              DateTime?       @db.SmallDateTime
   fechaFin                 DateTime?       @db.SmallDateTime
   cupoMaximo               Decimal?        @db.Decimal(3, 0)
@@ -54,7 +54,7 @@ model FormasPago {
 }
 
 model GrupoCurso {
-  idGrupo                 Decimal                @id(map: "PK_GrupoCurso") @db.Decimal(3, 0)
+  idGrupo                 Int                    @id(map: "PK_GrupoCurso") @default(autoincrement())
   codigo                  String?                @db.NVarChar(20)
   Nombre                  String                 @db.NVarChar(150)
   descripcion             String?                @db.NVarChar(250)
@@ -66,7 +66,7 @@ model GrupoCurso {
 }
 
 model GrupoCursoFormasPago {
-  idGrupo     Decimal    @db.Decimal(3, 0)
+  idGrupo     Int
   idFormaPago Decimal    @db.Decimal(2, 0)
   FormasPago  FormasPago @relation(fields: [idFormaPago], references: [idFormaPago], onUpdate: NoAction, map: "FK_GrupoCursoFormasPago_FormasPago")
   GrupoCurso  GrupoCurso @relation(fields: [idGrupo], references: [idGrupo], onUpdate: NoAction, map: "FK_GrupoCursoFormasPago_GrupoCurso")
@@ -76,7 +76,7 @@ model GrupoCursoFormasPago {
 
 model Inscripciones {
   idInscripcion      Decimal        @id(map: "PK_Inscripciones") @db.Decimal(18, 0)
-  idCurso            Decimal        @db.Decimal(18, 0)
+  idCurso            Int
   nroDocumento       Decimal?       @db.Decimal(11, 0)
   fecha              DateTime?      @db.SmallDateTime
   pagado             Boolean?
@@ -94,7 +94,7 @@ model Inscripciones {
 
 model Pagos {
   idParticipante     String        @db.UniqueIdentifier
-  idCurso            Decimal       @db.Decimal(18, 0)
+  idCurso            Int
   nroDocumentox      Decimal?      @db.Decimal(8, 0)
   fecha              DateTime?     @db.SmallDateTime
   estado             String?       @db.NVarChar(100)
@@ -131,7 +131,7 @@ model Participantes {
 }
 
 model Perfiles {
-  idPerfil         Decimal            @id(map: "PK_Perfiles") @db.Decimal(3, 0)
+  idPerfil         Int                @id(map: "PK_Perfiles") @default(autoincrement())
   nombre           String?            @db.NVarChar(50)
   UsuariosPerfiles UsuariosPerfiles[]
 }
@@ -147,7 +147,7 @@ model sysdiagrams {
 }
 
 model Usuarios {
-  idUsuario           Decimal               @id(map: "PK_Usuarios") @db.Decimal(3, 0)
+  idUsuario           Int                   @id(map: "PK_Usuarios") @default(autoincrement())
   apellido            String?               @db.NVarChar(50)
   nombre              String?               @db.NChar(50)
   nombreUsuario       String?               @db.NVarChar(50)
@@ -157,8 +157,8 @@ model Usuarios {
 }
 
 model UsuariosGrupoCursos {
-  idUsuario    Decimal    @db.Decimal(3, 0)
-  idGrupoCurso Decimal    @db.Decimal(3, 0)
+  idUsuario    Int
+  idGrupoCurso Int
   GrupoCurso   GrupoCurso @relation(fields: [idGrupoCurso], references: [idGrupo], onUpdate: NoAction, map: "FK_UsuariosGrupoCursos_GrupoCurso")
   Usuarios     Usuarios   @relation(fields: [idUsuario], references: [idUsuario], onUpdate: NoAction, map: "FK_UsuariosGrupoCursos_UsuariosGrupoCursos")
 
@@ -166,8 +166,8 @@ model UsuariosGrupoCursos {
 }
 
 model UsuariosPerfiles {
-  IdUsuario  Decimal  @db.Decimal(3, 0)
-  IdPerfil   Decimal  @db.Decimal(3, 0)
+  IdUsuario  Int
+  IdPerfil   Int
   LogInterno String?  @db.VarChar(4000)
   Perfiles   Perfiles @relation(fields: [IdPerfil], references: [idPerfil], onUpdate: NoAction, map: "FK_UsuariosPerfiles_Perfiles")
   Usuarios   Usuarios @relation(fields: [IdUsuario], references: [idUsuario], onUpdate: NoAction, map: "FK_UsuariosPerfiles_Usuarios")
