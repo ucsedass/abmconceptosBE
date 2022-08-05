@@ -6,6 +6,7 @@ router.get("/", async (req, res, next) => {
   res.send({ message: "Ok api is working 🚀" });
 });
 
+/**************************************** TRAER TODOS LOS EVENTOS *********************************************************************/
 router.get("/grupocurso", async (req, res, next) => {
   try {
     const eventos = await prisma.GrupoCurso.findMany({});
@@ -15,6 +16,7 @@ router.get("/grupocurso", async (req, res, next) => {
   }
 });
 
+/*********************************** CURSOS POR EVENTO **********************************************************/
 router.get("/cursosxevento/:id_evento", async (req, res, next) => {
   const { id_evento } = req.params;
   try {
@@ -29,6 +31,7 @@ router.get("/cursosxevento/:id_evento", async (req, res, next) => {
   }
 });
 
+/***************************************** ARANCELES POR CURSO **************************************************** */
 router.get("/arancelesxcurso/:id_curso", async (req, res, next) => {
   const { id_curso } = req.params;
   try {
@@ -44,7 +47,6 @@ router.get("/arancelesxcurso/:id_curso", async (req, res, next) => {
 });
 
 /************************CURSO POR ID*************************/
-
 router.get("/cursoxid/:id_curso", async (req, res, next) => {
   const { id_curso } = req.params;
   try {
@@ -59,6 +61,7 @@ router.get("/cursoxid/:id_curso", async (req, res, next) => {
   }
 });
 
+/**********************  BUSCAR EVENTO *******************************************/
 router.get("/buscarevento/:codigo", async (req, res, next) => {
   const { codigo } = req.params;
   try {
@@ -72,6 +75,8 @@ router.get("/buscarevento/:codigo", async (req, res, next) => {
     next(error);
   }
 });
+
+/************************************ ALTA ARANCELES *********************************************/
 router.post("/nuevoarancel", async (req, res, next) => {
   const { IdCurso, FechaDesde, FechaHasta, Precio, CantidadUnidadesMinima } =
     req.body;
@@ -93,6 +98,25 @@ router.post("/nuevoarancel", async (req, res, next) => {
   }
 });
 
+/****************************** BAJA ARANCEL ****************************************** */
+router.get("/bajaarancel", async (req, res, next) => {
+  const { idCurso, fechaDesde, fechaHasta } = req.body;
+
+  try {
+    const bajaarancel = await prisma.Aranceles.delete({
+      where: {
+        idCurso: idCurso,
+        fechaDesde: fechaDesde,
+        fechaHasta: fechaHasta,
+      },
+    });
+    res.json(bajaarancel);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/*************************************** NUEVO CURSO ******************************************************/
 router.post("/nuevocurso", async (req, res, next) => {
   const {
     nombre1,
@@ -144,6 +168,7 @@ router.post("/nuevocurso", async (req, res, next) => {
   }
 });
 
+/********************************* NUEVO EVENTO ************************************************/
 router.post("/nuevoevento", async (req, res, next) => {
   const { codigo, Nombre, descripcion, habilitado, RequiereValidacionEmail } =
     req.body;
