@@ -8,14 +8,13 @@ datasource db {
 }
 
 model Aranceles {
+  IdArancel              Int      @id(map: "PK_Aranceles_1") @default(autoincrement())
   IdCurso                Int
   FechaDesde             DateTime @db.SmallDateTime
   FechaHasta             DateTime @db.SmallDateTime
   Precio                 Decimal? @db.Decimal(7, 2)
   CantidadUnidadesMinima Int?     @default(1, map: "DF_Aranceles_CantidadUnidadesMinima")
   Cursos                 Cursos   @relation(fields: [IdCurso], references: [idCurso], onUpdate: NoAction, map: "FK_Aranceles_Cursos")
-
-  @@id([IdCurso, FechaDesde, FechaHasta], map: "PK_Aranceles")
 }
 
 model Cursos {

@@ -61,13 +61,64 @@ router.get("/cursoxid/:id_curso", async (req, res, next) => {
   }
 });
 
-/**********************  BUSCAR EVENTO *******************************************/
+/****************************************** BUSCAR CURSO PARA VER SI EXISTE *************************************************************** */
+router.get("/cursoexiste/:codigo", async (req, res, next) => {
+  const { codigo } = req.params;
+
+  try {
+    const busqueda = await prisma.Cursos.findMany({
+      where: {
+        codigo: codigo,
+      },
+    });
+
+    res.send(busqueda);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/****************************************** BUSCAR EVENTO PARA VER SI EXISTE *************************************************************** */
+
+router.get("/eventoexiste/:codigo", async (req, res, next) => {
+  const { codigo } = req.params;
+
+  try {
+    const busqueda = await prisma.GrupoCurso.findMany({
+      where: {
+        codigo: codigo,
+      },
+    });
+
+    res.send(busqueda);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**********************  BUSCAR EVENTO (PARA EL BOTON BUSCAR ) *******************************************/
 router.get("/buscarevento/:codigo", async (req, res, next) => {
   const { codigo } = req.params;
   try {
     const eventos = await prisma.GrupoCurso.findMany({
       where: {
-        codigo: codigo,
+        OR: [
+          {
+            codigo: {
+              contains: codigo,
+            },
+          },
+          {
+            Nombre: {
+              contains: codigo,
+            },
+          },
+          {
+            descripcion: {
+              contains: codigo,
+            },
+          },
+        ],
       },
     });
     res.json(eventos);
@@ -99,15 +150,34 @@ router.post("/nuevoarancel", async (req, res, next) => {
 });
 
 /****************************** BAJA ARANCEL ****************************************** */
-router.get("/bajaarancel", async (req, res, next) => {
-  const { idCurso, fechaDesde, fechaHasta } = req.body;
+router.delete("/bajaarancel", async (req, res, next) => {
+  const { IdArancel } = req.body;
+
+  console.log("llegaron los parametros:", IdArancel);
 
   try {
     const bajaarancel = await prisma.Aranceles.delete({
       where: {
-        idCurso: idCurso,
-        fechaDesde: fechaDesde,
-        fechaHasta: fechaHasta,
+        IdArancel: IdArancel,
+      },
+    });
+    res.json(bajaarancel);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/********************************* UPDATE ARANCEL*********************************************************/
+
+router.delete("/updatearancel", async (req, res, next) => {
+  const { IdCurso, FechaDesde, FechaHasta } = req.body;
+
+  console.log("llegaron los parametros:", IdCurso, FechaDesde, FechaHasta);
+
+  try {
+    const bajaarancel = await prisma.Aranceles.delete({
+      where: {
+        // agregar campo borrado e idUNico a aranceles para hacer la baja fisica
       },
     });
     res.json(bajaarancel);
