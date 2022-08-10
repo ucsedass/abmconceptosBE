@@ -6,6 +6,22 @@ router.get("/", async (req, res, next) => {
   res.send({ message: "Ok api is working 🚀" });
 });
 
+/**************************  TRAER LOS PARAMETROS *******************************************/
+
+router.get("/traerparametro", async (req, res, next) => {
+  try {
+    const parametros = await prisma.Parametros.findMany({
+      where: {
+        IdParametro: 1,
+      },
+    });
+
+    res.json(parametros);
+  } catch (error) {
+    next(error);
+  }
+});
+
 /**************************************** TRAER TODOS LOS EVENTOS *********************************************************************/
 router.get("/grupocurso", async (req, res, next) => {
   try {
@@ -253,6 +269,25 @@ router.post("/nuevoevento", async (req, res, next) => {
       },
     });
     res.json(nuevoevento);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/****************************************** ACTUALIZAR EVENTO ********************************************************/
+router.post("/actualizarevento", async (req, res, next) => {
+  const { idGrupo, Nombre, descripcion } = req.body;
+  try {
+    const updateevento = await prisma.grupoCurso.update({
+      where: {
+        idGrupo: idGrupo,
+      },
+      data: {
+        Nombre: Nombre,
+        descripcion: descripcion,
+      },
+    });
+    res.json(updateevento);
   } catch (error) {
     next(error);
   }

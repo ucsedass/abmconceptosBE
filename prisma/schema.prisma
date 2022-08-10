@@ -173,3 +173,9 @@ model UsuariosPerfiles {
 
   @@id([IdUsuario, IdPerfil], map: "PK_UsuariosPerfiles")
 }
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model Parametros {
+  IdParametro Int     @id(map: "PK_Parametros") @default(autoincrement())
+  BaseUrl     String? @db.VarChar(200)
+}
