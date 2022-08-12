@@ -293,4 +293,40 @@ router.post("/actualizarevento", async (req, res, next) => {
   }
 });
 
+/*************************************** ACTUALIZAR CURSO **********************************************************************************/
+router.post("/actualizarcurso", async (req, res, next) => {
+  const {
+    idCurso,
+    nombre1,
+    nombre2,
+    fechaInicio,
+    fechaFin,
+    cupoMaximo,
+    mailReferencia,
+    domicilioReferencia,
+    NombreContactoReferencia,
+  } = req.body;
+
+  try {
+    const updatecurso = await prisma.Cursos.update({
+      where: {
+        idCurso,
+      },
+      data: {
+        nombre1: nombre1,
+        nombre2: nombre2,
+        fechaInicio: fechaInicio,
+        fechaFin: fechaFin,
+        cupoMaximo: cupoMaximo,
+        mailReferencia: mailReferencia,
+        domicilioReferencia: domicilioReferencia,
+        NombreContactoReferencia: NombreContactoReferencia,
+      },
+    });
+    res.json(updatecurso);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
