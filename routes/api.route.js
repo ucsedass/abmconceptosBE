@@ -22,6 +22,17 @@ router.get("/traerparametro", async (req, res, next) => {
   }
 });
 
+/******************************************  TRAER FORMAS DE PAGO***********************************************************************************/
+router.get("/traerformasdepago", async (req, res, next) => {
+  try {
+    const formasdepago = await prisma.FormasPago.findMany({});
+
+    res.json(formasdepago);
+  } catch (error) {
+    next(error);
+  }
+});
+
 /**************************************** TRAER TODOS LOS EVENTOS *********************************************************************/
 router.get("/grupocurso", async (req, res, next) => {
   try {
@@ -57,6 +68,26 @@ router.get("/arancelesxcurso/:id_curso", async (req, res, next) => {
       },
     });
     res.json(aranceles);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/********************************** FORMAS DE PAGO POR EVENTO ****************************************************/
+router.get("/formaspagoxevento/:idGrupo", async (req, res, next) => {
+  const { idGrupo } = req.params;
+
+  try {
+    formaspago = await prisma.GrupoCursoFormasPago.findMany({
+      where: {
+        idGrupo: parseInt(idGrupo),
+      },
+      include: {
+        FormasPago: true,
+      },
+    });
+
+    res.json(formaspago);
   } catch (error) {
     next(error);
   }
@@ -269,6 +300,23 @@ router.post("/nuevoevento", async (req, res, next) => {
       },
     });
     res.json(nuevoevento);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/*********************************************  NUEVO GRUPO GURSO CON FORMAS DE PAGO********************************************************/
+router.post("/nuevogrupocursoformaspago", async (req, res, next) => {
+  const { idGrupo, idFormaPago } = req.body;
+
+  try {
+    const nuevoformapago = await prisma.GrupoCursoFormasPago.create({
+      data: {
+        idGrupo,
+        idFormaPago,
+      },
+    });
+    res.json(nuevoformapago);
   } catch (error) {
     next(error);
   }
