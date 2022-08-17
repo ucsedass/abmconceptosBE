@@ -93,6 +93,8 @@ router.get("/formaspagoxevento/:idGrupo", async (req, res, next) => {
   }
 });
 
+/**************************************** AGREGAR GRUPO CURSOS FORMAS PAGO ***********************************************************************/
+
 /************************CURSO POR ID*************************/
 router.get("/cursoxid/:id_curso", async (req, res, next) => {
   const { id_curso } = req.params;
